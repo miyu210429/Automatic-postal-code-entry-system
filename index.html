@@ -4,107 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>郵便番号自動入力システム</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <main>
-        <h1>郵便番号自動入力システム</h1>
-        <form action="" method="post">
-            <div>
-                <label for="zipcode">郵便番号:</label>
-                <input type="tel" id="zipcode" name="zipcode" placeholder="例: 1234567">
-            </div>
-            <hr>
-            <div>
-                <label for="address">住所:</label>
-                <select type="text" id="address" name="address">
-                    <option value="">郵便番号を入力してください</option>
-
-                </select>
-                
-            </div>
-    </main>
-
-</body>
+    <body>
+        <main>
+            <h1>郵便番号自動入力システム</h1>
+            <form action="" method="post">
+                <div>
+                    <label for="zipcode">郵便番号:</label>
+                    <input type="tel" id="zipcode" name="zipcode" placeholder="例: 1234567">
+                </div>
+                <hr>
+                <div>
+                    <label for="address">住所:</label>
+                    <select type="text" id="address" name="address">
+                        <option value="">郵便番号を入力してください</option>
+                    </select>
+                </div>
+        </main>
+    </body>
 </html>
 
 <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
-<script>
-/*
-function callApi() {
-  const res = fetch("https://zipcloud.ibsnet.co.jp/api/search?zipcode=4801103");
-  console.log(res)
-};
-*/
-
-$('#zipcode')
-    .focusout(function(e){
-        var zipcode = $('#zipcode').val();
-        zipcode = zipcode.replace(/-/g, ''); //ハイフンを除去する
-
-        //zipcodeに入力された値が７桁かどうかをチェック
-        //ハイフンがついてたら除去する
-        //ここには例外処理を書く
-        //正規表現を使って、zipcodeが7桁（または3桁-4桁）の数字でなかったらアラートを出してfalseを返す
-
-        if(!zipcode.match(/^\d{7}$/)){
-            alert('郵便番号は7桁の半角数字で入力してください。');
-            $("[name=address]").children().remove();
-            $("[name=address]").text("郵便番号を入力してください");
-            return false;
-        }
-
-        //ハイフンを取り除いたzipcodeをnameがzipcodeのフォームに挿入する
-        $("[name=zipcode]").val(zipcode);
-
-        $.ajax({
-            url: 'https://zipcloud.ibsnet.co.jp/api/search?zipcode=' + zipcode,
-            type: 'GET',
-            dataType: 'jsonp',
-            success: function(data) {
-
-                //住所が見つかった場合は、data.resultsに住所の情報が入っている
-                if (data.results) {
-                    var address = [];
-
-                    for(var i = 0; i < data.results.length; i++) {
-                        address[i] = data.results[i].address1 + data.results[i].address2 + data.results[i].address3;
-                        
-                    }
-                    //name addressのopitionを初期化
-                    $("[name=address]").children().remove();
-
-                    //name addressのoptionの値を追加する
-                    //addressという配列の中身だけループをしながらoptionのvalueとlabelをセットする
-                    for(var i =0; i < address.length; i++) {
-                        $("[name=address]").append($("<option>").text(address[i]).attr("value", address[i]));
-                    }
-                } else {
-                    alert('郵便番号に対応する住所が見つかりませんでした。');
-                    $("[name=address]").children().remove();
-                    $("[name=address]").text("郵便番号を入力してください");
-                }
-            },
-            error: function() {
-                alert('通信エラーが発生しました。');
-            }
-        });
-    })
-</script>
-
-<style>
-    main {
-        width: 400px;
-        margin: 0 auto;
-    }
-    div {
-        margin-bottom: 20px;
-    }
-    label {
-        display: block;
-        margin-bottom: 5px;
-    }
-    input, select {
-        width: 100%;
-        padding: 8px;
-        box-sizing: border-box;
-    }
+<script src="zipcode.js"></script>
