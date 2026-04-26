@@ -1,9 +1,0 @@
-services:
-  app:
-    image: php:8.3-cli
-    ports:
-      - "8000:8000"
-    volumes:
-      - .:/app
-    working_dir: /app
-    command: php -m http.server 8000

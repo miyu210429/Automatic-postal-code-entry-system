@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>郵便番号自動入力システム</title>
+</head>
+<body>
+    <main>
+        <h1>郵便番号自動入力システム</h1>
+        <form action="" method="post">
+            <div>
+                <label for="zipcode">郵便番号:</label>
+                <input type="tel" id="zipcode" name="zipcode" placeholder="例: 1234567">
+            </div>
+            
+            <div>
+                <label for="address">住所:</label>
+                <select type="text" id="address" name="address">
+                    <option value="">入力されます</option>
+
+                </select>
+                
+            </div>
+    </main>
+
+</body>
+</html>
+
+<script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+<script>
+/*
+function callApi() {
+  const res = fetch("https://zipcloud.ibsnet.co.jp/api/search?zipcode=4801103");
+  console.log(res)
+};
+*/
+
+$('#zipcode')
+    .focusout(function(e){
+        var zipcode = $('#zipcode').val();
+
+        $.ajax({
+            url: 'https://zipcloud.ibsnet.co.jp/api/search?zipcode=' + zipcode,
+            type: 'GET',
+            dataType: 'jsonp',
+            success: function(data) {
+
+                if (data.results) {
+                    var address = [];
+
+                    for(var i = 0; i < data.results.length; i++) {
+                        address[i] = data.results[i].address1 + data.results[i].address2 + data.results[i].address3;
+                        
+                    }
+                    //name addressのopitionを初期化
+                    $("[name=address]").children().remove();
+
+                    //name addressのoptionの値を追加する
+                    //addressという配列の中身だけループをしながらoptionのvalueとlabelをセットする
+                    for(var i =0; i < address.length; i++) {
+                        $("[name=address]").append($("<option>").text(address[i]).attr("value", address[i]));
+                    }
+                }
+            },
+            error: function() {
+                alert('通信エラーが発生しました。');
+            }
+        });
+    })
+
+
+
+
+//zipcodeからフォーカスが外れたらconsole.log('起動');
+    /*
+$(function(){
+    $('#ajax').on('click', function() {
+        var zipcode = $('#zipcode').val();
+        console.log(zipcode);
+        $.ajax({
+            url: 'https://zipcloud.ibsnet.co.jp/api/search?zipcode=' + zipcode,
+            type: 'GET',
+            dataType: 'jsonp',
+            success: function(data) {
+                if (data.results) {
+                    var prefecture = data.results[0].address1;
+                    $('#prefectures').val(prefecture);
+                } else {
+                    alert('郵便番号に対応する住所が見つかりませんでした。');
+                }
+            },
+            error: function() {
+                alert('通信エラーが発生しました。');
+            }
+        });
+    });
+});*/
+</script>
