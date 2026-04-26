@@ -17,7 +17,7 @@
             <div>
                 <label for="address">住所:</label>
                 <select type="text" id="address" name="address">
-                    <option value="">入力されます</option>
+                    <option value="">郵便番号を入力してください</option>
 
                 </select>
                 
@@ -39,6 +39,22 @@ function callApi() {
 $('#zipcode')
     .focusout(function(e){
         var zipcode = $('#zipcode').val();
+        zipcode = zipcode.replace(/-/g, ''); //ハイフンを除去する
+
+        //zipcodeに入力された値が７桁かどうかをチェック
+        //ハイフンがついてたら除去する
+        //ここには例外処理を書く
+        //正規表現を使って、zipcodeが7桁（または3桁-4桁）の数字でなかったらアラートを出してfalseを返す
+
+        if(!zipcode.match(/^\d{7}$/)){
+            alert('郵便番号は7桁の半角数字で入力してください。');
+            $("[name=address]").children().remove();
+            $("[name=address]").text("郵便番号を入力してください");
+            return false;
+        }
+
+        //ハイフンを取り除いたzipcodeをnameがzipcodeのフォームに挿入する
+        $("[name=zipcode]").val(zipcode);
 
         $.ajax({
             url: 'https://zipcloud.ibsnet.co.jp/api/search?zipcode=' + zipcode,
@@ -46,6 +62,7 @@ $('#zipcode')
             dataType: 'jsonp',
             success: function(data) {
 
+                //住所が見つかった場合は、data.resultsに住所の情報が入っている
                 if (data.results) {
                     var address = [];
 
@@ -61,6 +78,10 @@ $('#zipcode')
                     for(var i =0; i < address.length; i++) {
                         $("[name=address]").append($("<option>").text(address[i]).attr("value", address[i]));
                     }
+                } else {
+                    alert('郵便番号に対応する住所が見つかりませんでした。');
+                    $("[name=address]").children().remove();
+                    $("[name=address]").text("郵便番号を入力してください");
                 }
             },
             error: function() {
@@ -68,32 +89,4 @@ $('#zipcode')
             }
         });
     })
-
-
-
-
-//zipcodeからフォーカスが外れたらconsole.log('起動');
-    /*
-$(function(){
-    $('#ajax').on('click', function() {
-        var zipcode = $('#zipcode').val();
-        console.log(zipcode);
-        $.ajax({
-            url: 'https://zipcloud.ibsnet.co.jp/api/search?zipcode=' + zipcode,
-            type: 'GET',
-            dataType: 'jsonp',
-            success: function(data) {
-                if (data.results) {
-                    var prefecture = data.results[0].address1;
-                    $('#prefectures').val(prefecture);
-                } else {
-                    alert('郵便番号に対応する住所が見つかりませんでした。');
-                }
-            },
-            error: function() {
-                alert('通信エラーが発生しました。');
-            }
-        });
-    });
-});*/
 </script>
